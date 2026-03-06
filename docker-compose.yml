@@ -27,8 +27,6 @@ services:
       DD_AI_GUARD_ENABLED: "true"
     depends_on:
       - datadog-agent
-    volumes:
-      - ./data:/app/data
 
   datadog-agent:
     image: gcr.io/datadoghq/agent:latest
