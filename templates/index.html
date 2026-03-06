@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Café & Pastelaria — Home{% endblock %}
+
+{% block head %}
+<style>
+    .hero {
+        background: linear-gradient(135deg, #3b2a1a 0%, #7b4a2a 100%);
+        color: white;
+        padding: 5rem 2rem;
+        text-align: center;
+    }
+    .hero h1 { font-size: 3rem; margin-bottom: 1rem; color: #f5c842; }
+    .hero p  { font-size: 1.2rem; color: #e8d5b7; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-top: 3rem;
+    }
+    .feature-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        transition: transform 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); }
+    .feature-card .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .feature-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #3b2a1a; }
+    .feature-card p { color: #7a5a3a; font-size: 0.95rem; line-height: 1.6; }
+
+    .section-title {
+        text-align: center;
+        font-size: 1.8rem;
+        color: #3b2a1a;
+        margin-bottom: 0.5rem;
+    }
+    .section-sub {
+        text-align: center;
+        color: #8a6a4a;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Café & Pastelaria</h1>
+    <p>The best Brazilian coffee experience paired with crispy, golden pastéis. Come in, sit down, and enjoy.</p>
+    <div class="hero-actions">
+        <a href="{{ url_for('menu') }}" class="btn btn-primary">See Our Menu</a>
+        {% if user %}
+            <a href="{{ url_for('chat') }}" class="btn btn-secondary">Ask the AI Barista</a>
+        {% else %}
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">Join the Club</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="section-title" style="margin-top:2rem;">Why Café & Pastelaria?</h2>
+    <p class="section-sub">We take coffee seriously. And pastéis even more seriously.</p>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="icon">☕</div>
+            <h3>Specialty Coffee</h3>
+            <p>Single-origin beans, expertly roasted and brewed to perfection every single cup.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">🥟</div>
+            <h3>Crispy Pastéis</h3>
+            <p>Hand-folded, deep-fried to golden perfection. Traditional fillings and creative new ones.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">🤖</div>
+            <h3>AI Barista</h3>
+            <p>Not sure what to order? Chat with our AI barista and get a personalized recommendation.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">🌿</div>
+            <h3>Fresh Ingredients</h3>
+            <p>Locally sourced, daily fresh. No compromises on quality — ever.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

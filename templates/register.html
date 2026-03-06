@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Register — Café & Pastelaria{% endblock %}
+
+{% block head %}
+<style>
+    .auth-wrapper {
+        min-height: calc(100vh - 64px - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+    .auth-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+    .auth-card h1 { font-size: 1.8rem; color: #3b2a1a; margin-bottom: 0.4rem; }
+    .auth-card .subtitle { color: #8a6a4a; margin-bottom: 1.8rem; font-size: 0.95rem; }
+    .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: #8a6a4a; }
+    .auth-footer a { color: #c0392b; text-decoration: none; font-weight: bold; }
+
+    .password-hint {
+        font-size: 0.78rem;
+        color: #b09a80;
+        margin-top: 4px;
+        /* SECURITY ISSUE: No actual enforcement of these "hints" */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1>Join the club 🥟</h1>
+        <p class="subtitle">Create an account to unlock the AI barista and member perks.</p>
+
+        {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        {% if success %}
+            <div class="alert alert-success">{{ success }} <a href="{{ url_for('login') }}">Log in now →</a></div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <!-- SECURITY ISSUE: No CSRF token -->
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="choose_a_username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <!-- SECURITY ISSUE: No email verification sent -->
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <!-- SECURITY ISSUE: Password stored in plain text, no strength requirement -->
+                <input type="password" id="password" name="password" placeholder="choose_a_password" required>
+                <p class="password-hint">Any password works — we suggest something you'll remember! (stored as-is)</p>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;">
+                Create Account
+            </button>
+        </form>
+
+        <div style="text-align:center;margin-top:1.5rem;">
+            <div class="auth-footer">
+                Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

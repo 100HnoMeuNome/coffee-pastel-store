@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+{% block title %}AI Barista — Café & Pastelaria{% endblock %}
+
+{% block head %}
+<style>
+    .chat-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 1.5rem;
+        height: calc(100vh - 64px - 80px - 4rem);
+        min-height: 500px;
+        padding: 2rem 1.5rem;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .sidebar h3 { font-size: 1rem; color: #3b2a1a; border-bottom: 2px solid #f5c842; padding-bottom: 0.5rem; }
+    .suggestion-btn {
+        background: #fdf6ec;
+        border: 1.5px solid #e0cbb0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+        color: #5a3e28;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        transition: background 0.2s, border-color 0.2s;
+        line-height: 1.4;
+    }
+    .suggestion-btn:hover { background: #f5c84222; border-color: #c0392b; }
+
+    /* Chat window */
+    .chat-window {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .chat-header {
+        background: #3b2a1a;
+        color: white;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .chat-header .avatar {
+        width: 40px;
+        height: 40px;
+        background: #f5c842;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+    .chat-header .info { display: flex; flex-direction: column; }
+    .chat-header .name { font-weight: bold; font-size: 1rem; }
+    .chat-header .status { font-size: 0.78rem; color: #a8d5a2; }
+
+    .messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: #fdf6ec;
+    }
+
+    .message {
+        display: flex;
+        gap: 0.7rem;
+        align-items: flex-end;
+        max-width: 75%;
+    }
+    .message.user { flex-direction: row-reverse; align-self: flex-end; }
+    .message.assistant { align-self: flex-start; }
+
+    .bubble {
+        padding: 10px 14px;
+        border-radius: 18px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    .message.user .bubble {
+        background: #c0392b;
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+    .message.assistant .bubble {
+        background: white;
+        color: #3b2a1a;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .msg-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+        background: #f5c842;
+    }
+    .message.user .msg-avatar { background: #3b2a1a; color: #f5c842; }
+
+    .typing-indicator .bubble { background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .typing-dots span {
+        display: inline-block;
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: #b09a80;
+        animation: bounce 1.2s infinite;
+        margin: 0 2px;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-6px); }
+    }
+
+    .chat-input {
+        display: flex;
+        gap: 0.8rem;
+        padding: 1rem 1.2rem;
+        border-top: 1px solid #e0cbb0;
+        background: white;
+    }
+    .chat-input input {
+        flex: 1;
+        padding: 10px 16px;
+        border: 2px solid #e0cbb0;
+        border-radius: 24px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        background: #fdf6ec;
+        transition: border-color 0.2s;
+    }
+    .chat-input input:focus { outline: none; border-color: #c0392b; }
+    .send-btn {
+        background: #c0392b;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 44px; height: 44px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.2s;
+        flex-shrink: 0;
+    }
+    .send-btn:hover { opacity: 0.85; }
+    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    @media (max-width: 700px) {
+        .chat-layout { grid-template-columns: 1fr; height: auto; }
+        .sidebar { display: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-layout">
+    <!-- Sidebar with suggestions -->
+    <div class="sidebar">
+        <h3>Quick Questions</h3>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">What coffee do you recommend for a rainy day?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">What's the best pastel to pair with a cappuccino?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">I want something sweet — what do you suggest?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Do you have any savory options?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">What's your most popular item?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">I need a strong coffee — what should I order?</button>
+    </div>
+
+    <!-- Main chat window -->
+    <div class="chat-window">
+        <div class="chat-header">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <span class="name">Barista AI</span>
+                <span class="status">● Online — powered by Claude</span>
+            </div>
+        </div>
+
+        <div class="messages" id="messages">
+            <div class="message assistant">
+                <div class="msg-avatar">☕</div>
+                <div class="bubble">
+                    Olá, {{ user }}! I'm your AI Barista. Whether you're craving something bold and strong or sweet and crispy, I'm here to help you find the perfect order. What can I get for you today?
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Ask me anything about our menu..." autocomplete="off" />
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const messagesEl = document.getElementById('messages');
+    const inputEl    = document.getElementById('messageInput');
+    const sendBtn    = document.getElementById('sendBtn');
+
+    function scrollToBottom() {
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function appendMessage(role, text) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `message ${role}`;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'msg-avatar';
+        avatar.textContent = role === 'user' ? '👤' : '☕';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.textContent = text;
+
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubble);
+        messagesEl.appendChild(wrapper);
+        scrollToBottom();
+        return wrapper;
+    }
+
+    function showTyping() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'message assistant typing-indicator';
+        wrapper.id = 'typing';
+
+        const avatar = document.createElement('div');
+        avatar.className = 'msg-avatar';
+        avatar.textContent = '☕';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubble);
+        messagesEl.appendChild(wrapper);
+        scrollToBottom();
+    }
+
+    function removeTyping() {
+        const t = document.getElementById('typing');
+        if (t) t.remove();
+    }
+
+    async function sendMessage() {
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        inputEl.value = '';
+        sendBtn.disabled = true;
+        appendMessage('user', text);
+        showTyping();
+
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
+            removeTyping();
+            appendMessage('assistant', data.reply || data.error || 'Sorry, something went wrong.');
+        } catch (e) {
+            removeTyping();
+            appendMessage('assistant', 'Oops! Could not reach the server. Please try again.');
+        } finally {
+            sendBtn.disabled = false;
+            inputEl.focus();
+        }
+    }
+
+    function sendSuggestion(btn) {
+        inputEl.value = btn.textContent.trim();
+        sendMessage();
+    }
+
+    inputEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+{% endblock %}

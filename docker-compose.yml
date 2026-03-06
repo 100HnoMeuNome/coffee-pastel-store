@@ -1,0 +1,50 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      # Datadog APM
+      DD_AGENT_HOST: datadog-agent
+      DD_TRACE_AGENT_PORT: 8126
+      DD_SERVICE: coffee-pastel-store
+      DD_ENV: development
+      DD_VERSION: "1.2.0"
+      DD_LOGS_INJECTION: "true"
+      DD_TRACE_SAMPLE_RATE: "1"
+      # Datadog LLM Observability
+      DD_LLMOBS_ENABLED: "1"
+      DD_LLMOBS_ML_APP: coffee-pastel-ai
+      DD_LLMOBS_AGENTLESS_ENABLED: "false"
+      # App secrets (intentionally weak - for demo purposes)
+      SECRET_KEY: "secret123"
+      # Anthropic API Key - provide via .env file or shell
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      DD_API_KEY: ${DD_API_KEY}
+      DD_APP_KEY: ${DD_APP_KEY}
+      DD_SITE: ${DD_SITE:-datadoghq.com}
+      # Datadog AI Guard
+      DD_AI_GUARD_ENABLED: "true"
+    depends_on:
+      - datadog-agent
+    volumes:
+      - ./data:/app/data
+
+  datadog-agent:
+    image: gcr.io/datadoghq/agent:latest
+    environment:
+      DD_API_KEY: ${DD_API_KEY}
+      DD_SITE: ${DD_SITE:-datadoghq.com}
+      DD_APM_ENABLED: "true"
+      DD_APM_NON_LOCAL_TRAFFIC: "true"
+      DD_LOGS_ENABLED: "true"
+      DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL: "true"
+      DD_CONTAINER_EXCLUDE: "name:datadog-agent"
+      DD_LLMOBS_ENABLED: "1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+    ports:
+      - "8126:8126/tcp"
+      - "8125:8125/udp"

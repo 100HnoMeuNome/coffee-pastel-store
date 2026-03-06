@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Menu — Café & Pastelaria{% endblock %}
+
+{% block head %}
+<style>
+    .menu-hero {
+        background: linear-gradient(135deg, #7b4a2a 0%, #3b2a1a 100%);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+    .menu-hero h1 { font-size: 2.4rem; color: #f5c842; margin-bottom: 0.5rem; }
+    .menu-hero p { color: #e8d5b7; }
+
+    .menu-section { margin-top: 2.5rem; }
+    .menu-section h2 {
+        font-size: 1.6rem;
+        color: #3b2a1a;
+        border-bottom: 3px solid #f5c842;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.2rem;
+    }
+
+    .menu-item {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .menu-item:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+    .menu-item-image {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+    .menu-item-body {
+        padding: 1.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 1;
+    }
+    .menu-item-name {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #3b2a1a;
+    }
+    .menu-item-desc { font-size: 0.9rem; color: #7a5a3a; line-height: 1.5; flex: 1; }
+    .menu-item-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #c0392b;
+        margin-top: 0.5rem;
+    }
+
+    .cta-banner {
+        background: #3b2a1a;
+        color: #f5c842;
+        text-align: center;
+        padding: 2.5rem;
+        border-radius: 12px;
+        margin-top: 3rem;
+    }
+    .cta-banner h3 { font-size: 1.4rem; margin-bottom: 0.6rem; }
+    .cta-banner p { color: #e8d5b7; margin-bottom: 1.2rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="menu-hero">
+    <h1>Our Menu</h1>
+    <p>Freshly brewed coffee & hand-crafted pastéis — made daily with love.</p>
+</div>
+
+<div class="container">
+    <div class="menu-section">
+        <h2>☕ Coffees</h2>
+        <div class="menu-grid">
+            {% for item in menu.coffees %}
+            <div class="menu-item">
+                <div class="menu-item-name">{{ item.name }}</div>
+                <div class="menu-item-desc">{{ item.description }}</div>
+                <div class="menu-item-price">R$ {{ "%.2f"|format(item.price) }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="menu-section">
+        <h2>🥟 Pastéis</h2>
+        <div class="menu-grid">
+            {% for item in menu.pasteis %}
+            <div class="menu-item">
+                {% if item.image %}
+                <img class="menu-item-image" src="{{ item.image }}" alt="{{ item.name }}">
+                {% endif %}
+                <div class="menu-item-body">
+                    <div class="menu-item-name">{{ item.name }}</div>
+                    <div class="menu-item-desc">{{ item.description }}</div>
+                    <div class="menu-item-price">R$ {{ "%.2f"|format(item.price) }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if user %}
+    <div class="cta-banner">
+        <h3>Not sure what to order?</h3>
+        <p>Our AI Barista can help you pick the perfect combination!</p>
+        <a href="{{ url_for('chat') }}" class="btn btn-secondary">Chat with AI Barista</a>
+    </div>
+    {% else %}
+    <div class="cta-banner">
+        <h3>Want a personalized recommendation?</h3>
+        <p>Create an account to chat with our AI Barista.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-secondary">Sign Up Free</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
