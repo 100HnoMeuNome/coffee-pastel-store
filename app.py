@@ -6,6 +6,7 @@ NOTE: This app contains INTENTIONALLY POOR security controls for demo/educationa
 Do NOT use these patterns in production.
 """
 
+import logging
 import os
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
@@ -23,6 +24,13 @@ from ddtrace.appsec.ai_guard import (
 )
 import ddtrace.internal.logger as ddlogger
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] "
+           "[dd.service=%(dd.service)s dd.env=%(dd.env)s dd.version=%(dd.version)s "
+           "dd.trace_id=%(dd.trace_id)s dd.span_id=%(dd.span_id)s] - %(message)s",
+)
+
 LLMObs.enable(
     ml_app=os.getenv("DD_LLMOBS_ML_APP", "coffee-pastel-ai"),
     agentless_enabled=os.getenv("DD_LLMOBS_AGENTLESS_ENABLED", "false").lower() == "true",
@@ -38,28 +46,35 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "data", "store.db")
 
 MENU = {
     "coffees": [
-        {"id": 1, "name": "Espresso",   "price": 5.50,  "description": "Strong and bold single shot"},
-        {"id": 2, "name": "Cappuccino", "price": 8.00,  "description": "Espresso with steamed milk foam"},
-        {"id": 3, "name": "Latte",      "price": 9.00,  "description": "Smooth espresso with lots of milk"},
-        {"id": 4, "name": "Cold Brew",  "price": 10.00, "description": "Slow-steeped, served over ice"},
-        {"id": 5, "name": "Affogato",   "price": 12.00, "description": "Espresso poured over vanilla ice cream"},
+        {"id": 1, "name": "Espresso",   "price": 5.50,  "description": "Dose encorpada e intensa, extração perfeita"},
+        {"id": 2, "name": "Cappuccino", "price": 8.00,  "description": "Espresso com leite vaporizado e espuma cremosa"},
+        {"id": 4, "name": "Cold Brew",  "price": 10.00, "description": "Extração lenta a frio, servido com gelo"},
     ],
     "pasteis": [
-        {"id": 6,  "name": "Pastel de Queijo",       "price": 6.00,  "description": "Crispy pastry filled with melted cheese",  "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
-        {"id": 7,  "name": "Pastel de Carne",         "price": 7.00,  "description": "Seasoned ground beef with herbs",            "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
-        {"id": 8,  "name": "Pastel de Frango",        "price": 7.00,  "description": "Shredded chicken with creamy catupiry",      "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
-        {"id": 9,  "name": "Pastel de Camarão",       "price": 10.00, "description": "Juicy shrimp with tomato and spices",        "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
-        {"id": 10, "name": "Pastel Doce de Banana",   "price": 6.50,  "description": "Sweet banana with cinnamon and sugar",       "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
+        {"id": 6,  "name": "Pastel de Queijo",      "price": 6.00,  "description": "Massa crocante recheada com queijo derretido",    "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
+        {"id": 7,  "name": "Pastel de Carne",       "price": 7.00,  "description": "Carne moída temperada com ervas frescas",          "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
+        {"id": 8,  "name": "Pastel de Frango",      "price": 7.00,  "description": "Frango desfiado com catupiry cremoso",              "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
+        {"id": 10, "name": "Pastel Doce de Banana", "price": 6.50,  "description": "Banana caramelizada com canela e açúcar",          "image": "https://guiadacozinha.com.br/wp-content/uploads/2016/01/pastel-de-frango-e-bacon.webp"},
+    ],
+    "sobremesas": [
+        {"id": 13, "name": "Pé de Moleque",         "price": 5.00,  "description": "Clássico brasileiro de amendoim com rapadura, crocante e irresistível", "image": "https://receitatodahora.com.br/wp-content/uploads/2023/11/pe-moleque-1611.jpg"},
     ],
 }
 
 SYSTEM_PROMPT = (
     "You are Barista AI, a friendly virtual barista for Café & Pastelaria — "
-    "a cozy Brazilian coffee and pastel shop. You help customers choose from the menu "
-    "and answer questions about the products. Be warm, enthusiastic about food, and keep answers concise.\n\n"
+    "a cozy Brazilian coffee and pastel shop. You help customers choose from the menu, "
+    "take orders, and collect delivery/payment information. Be warm, enthusiastic about food, and keep answers concise.\n\n"
     "Menu:\n"
-    "COFFEES: Espresso (R$5.50), Cappuccino (R$8.00), Latte (R$9.00), Cold Brew (R$10.00), Affogato (R$12.00)\n"
-    "PASTÉIS: Queijo (R$6.00), Carne (R$7.00), Frango (R$7.00), Camarão (R$10.00), Doce de Banana (R$6.50)"
+    "CAFÉS: Espresso (R$5,50), Cappuccino (R$8,00), Cold Brew (R$10,00), "
+    "Jacu Bird (R$28,00 — café raro processado pelo pássaro Jacu), "
+    "Café Frutado e Fermentado (R$18,00 — specialty natural anaeróbico)\n"
+    "PASTÉIS: Queijo (R$6,00), Carne (R$7,00), Frango com Catupiry (R$7,00), Doce de Banana (R$6,50)\n"
+    "SOBREMESAS: Pé de Moleque (R$5,00)\n\n"
+    "When a customer sends their order, confirm the items and total, then ask:\n"
+    "1. Delivery or pickup? (Se entrega: ask for address and name. Se retirada: ask for name only.)\n"
+    "2. Payment method: PIX, cartão de crédito/débito, or dinheiro.\n"
+    "Confirm all details warmly before closing the order."
 )
 
 

@@ -10,21 +10,29 @@ services:
       DD_SERVICE: coffee-pastel-store
       DD_ENV: development
       DD_VERSION: "1.2.0"
-      DD_LOGS_INJECTION: "true"
       DD_TRACE_SAMPLE_RATE: "1"
+      # Datadog Logs
+      DD_LOGS_INJECTION: "true"
       # Datadog LLM Observability
       DD_LLMOBS_ENABLED: "1"
       DD_LLMOBS_ML_APP: coffee-pastel-ai
       DD_LLMOBS_AGENTLESS_ENABLED: "false"
+      # Datadog App & API Protection (AppSec)
+      DD_APPSEC_ENABLED: "true"
+      # Datadog IAST (Interactive Application Security Testing)
+      DD_IAST_ENABLED: "true"
+      # Datadog SCA Runtime (Software Composition Analysis)
+      DD_APPSEC_SCA_ENABLED: "true"
+      # Datadog AI Guard
+      DD_AI_GUARD_ENABLED: "true"
       # App secrets (intentionally weak - for demo purposes)
       SECRET_KEY: "secret123"
-      # Anthropic API Key - provide via .env file or shell
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       DD_API_KEY: ${DD_API_KEY}
       DD_APP_KEY: ${DD_APP_KEY}
       DD_SITE: ${DD_SITE:-datadoghq.com}
-      # Datadog AI Guard
-      DD_AI_GUARD_ENABLED: "true"
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "coffee-pastel-store"}]'
     depends_on:
       - datadog-agent
 
@@ -33,12 +41,22 @@ services:
     environment:
       DD_API_KEY: ${DD_API_KEY}
       DD_SITE: ${DD_SITE:-datadoghq.com}
+      # APM
       DD_APM_ENABLED: "true"
       DD_APM_NON_LOCAL_TRAFFIC: "true"
+      # Logs
       DD_LOGS_ENABLED: "true"
       DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL: "true"
       DD_CONTAINER_EXCLUDE: "name:datadog-agent"
+      # LLM Observability
       DD_LLMOBS_ENABLED: "1"
+      # CSM / CSPM (Cloud Security Posture Management)
+      DD_COMPLIANCE_CONFIG_ENABLED: "true"
+      DD_CSPM_ENABLED: "true"
+      # Vulnerability Management (SBOM / container image scanning)
+      DD_SBOM_ENABLED: "true"
+      DD_SBOM_CONTAINER_IMAGE_ENABLED: "true"
+      DD_CONTAINER_IMAGE_ENABLED: "true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/:/host/proc/:ro

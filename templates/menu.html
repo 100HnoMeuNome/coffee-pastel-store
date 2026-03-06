@@ -24,8 +24,8 @@
 
     .menu-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 1.2rem;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
     }
 
     .menu-item {
@@ -38,29 +38,131 @@
         transition: transform 0.2s, box-shadow 0.2s;
     }
     .menu-item:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+
     .menu-item-image {
         width: 100%;
-        height: 160px;
+        height: 110px;
         object-fit: cover;
     }
+
     .menu-item-body {
-        padding: 1.4rem;
+        padding: 1.2rem 1.4rem 1rem;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.4rem;
         flex: 1;
     }
+
     .menu-item-name {
-        font-size: 1.1rem;
-        font-weight: bold;
+        font-size: 1.05rem;
+        font-weight: 700;
         color: #3b2a1a;
+        font-family: inherit;
+        line-height: 1.3;
     }
-    .menu-item-desc { font-size: 0.9rem; color: #7a5a3a; line-height: 1.5; flex: 1; }
+    .menu-item-desc {
+        font-size: 0.88rem;
+        color: #7a5a3a;
+        line-height: 1.5;
+        flex: 1;
+    }
+    .menu-item-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.6rem;
+    }
     .menu-item-price {
-        font-size: 1.2rem;
-        font-weight: bold;
+        font-size: 1.15rem;
+        font-weight: 700;
         color: #c0392b;
-        margin-top: 0.5rem;
+    }
+    .add-btn {
+        background: #3b2a1a;
+        color: #f5c842;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.2s;
+    }
+    .add-btn:hover { background: #c0392b; color: white; }
+
+    /* ── Specialty coffee configurator ── */
+    .specialty-card {
+        background: linear-gradient(135deg, #fdf6ec 0%, #f5e6cc 100%);
+        border: 2px solid #e0cbb0;
+        border-radius: 16px;
+        padding: 1.8rem 2rem;
+        margin-bottom: 1.5rem;
+    }
+    .specialty-card h3 {
+        font-size: 1.15rem;
+        color: #3b2a1a;
+        margin: 0 0 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .config-steps { display: flex; flex-direction: column; gap: 1.2rem; }
+    .config-step { display: flex; flex-direction: column; gap: 0.6rem; }
+    .config-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #7a5a3a;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .config-options { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .config-opt {
+        background: white;
+        border: 2px solid #d0b896;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #5a3e28;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    .config-opt small { font-weight: 400; font-size: 0.78rem; color: #9a7a5a; }
+    .config-opt:hover { border-color: #c0392b; color: #c0392b; }
+    .config-opt.selected { border-color: #c0392b; background: #c0392b; color: white; }
+    .config-opt.selected small { color: #ffccc9; }
+    .config-add-btn {
+        background: #3b2a1a;
+        color: #f5c842;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.2s;
+        align-self: flex-start;
+        margin-top: 0.4rem;
+    }
+    .config-add-btn:hover { background: #c0392b; color: white; }
+    .config-add-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
+    .config-summary {
+        font-size: 0.88rem;
+        color: #5a3e28;
+        background: white;
+        border-radius: 8px;
+        padding: 8px 14px;
+        border: 1.5px solid #e0cbb0;
+        min-height: 36px;
+        display: flex;
+        align-items: center;
     }
 
     .cta-banner {
@@ -73,29 +175,236 @@
     }
     .cta-banner h3 { font-size: 1.4rem; margin-bottom: 0.6rem; }
     .cta-banner p { color: #e8d5b7; margin-bottom: 1.2rem; }
+
+    /* ── Floating cart button ── */
+    .cart-fab {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #c0392b;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 14px 22px;
+        font-size: 1rem;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 900;
+        transition: background 0.2s, transform 0.15s;
+    }
+    .cart-fab:hover { background: #a93226; transform: scale(1.05); }
+    .cart-fab .cart-count {
+        background: #f5c842;
+        color: #3b2a1a;
+        border-radius: 50%;
+        width: 22px; height: 22px;
+        font-size: 0.78rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+
+    /* ── Cart drawer ── */
+    .cart-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1000;
+    }
+    .cart-overlay.open { display: block; }
+
+    .cart-drawer {
+        position: fixed;
+        top: 0; right: 0;
+        width: 380px;
+        max-width: 100vw;
+        height: 100%;
+        background: white;
+        z-index: 1001;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+    }
+    .cart-drawer.open { transform: translateX(0); }
+
+    .cart-drawer-header {
+        background: #3b2a1a;
+        color: white;
+        padding: 1.2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .cart-drawer-header h3 { font-size: 1.1rem; color: #f5c842; margin: 0; }
+    .cart-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0 4px;
+    }
+
+    .cart-items {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .cart-empty {
+        color: #9a7a5a;
+        text-align: center;
+        margin-top: 3rem;
+        font-size: 0.95rem;
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem;
+        background: #fdf6ec;
+        border-radius: 10px;
+    }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name { font-weight: 600; font-size: 0.9rem; color: #3b2a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cart-item-price { font-size: 0.82rem; color: #c0392b; font-weight: 600; }
+    .qty-controls { display: flex; align-items: center; gap: 6px; }
+    .qty-btn {
+        background: #3b2a1a;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        width: 26px; height: 26px;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+    }
+    .qty-btn:hover { background: #c0392b; }
+    .qty-num { font-weight: 700; font-size: 0.95rem; min-width: 18px; text-align: center; }
+
+    .cart-footer {
+        padding: 1.2rem 1.5rem;
+        border-top: 2px solid #e0cbb0;
+        background: white;
+    }
+    .cart-total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #3b2a1a;
+        margin-bottom: 1rem;
+    }
+    .cart-total span:last-child { color: #c0392b; }
+    .checkout-btn {
+        width: 100%;
+        background: #c0392b;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 1rem;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .checkout-btn:hover { background: #a93226; }
+    .checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="menu-hero">
-    <h1>Our Menu</h1>
-    <p>Freshly brewed coffee & hand-crafted pastéis — made daily with love.</p>
+    <h1>Nosso Cardápio</h1>
+    <p>Cafés especiais & pastéis artesanais — feitos diariamente com carinho.</p>
 </div>
 
 <div class="container">
+
+    <!-- ── Coffees ── -->
     <div class="menu-section">
-        <h2>☕ Coffees</h2>
+        <h2>☕ Cafés</h2>
+
+        <!-- Specialty configurator -->
+        <div class="specialty-card">
+            <h3>✨ Cafés Especiais — Monte o Seu</h3>
+            <div class="config-steps">
+
+                <div class="config-step">
+                    <span class="config-label">1. Método de Preparo</span>
+                    <div class="config-options">
+                        <button class="config-opt" data-group="method" data-value="Coado" onclick="selectOpt(this)">
+                            Coado
+                            <small>V60, Chemex, AeroPress</small>
+                        </button>
+                        <button class="config-opt" data-group="method" data-value="Espresso" onclick="selectOpt(this)">
+                            Espresso
+                            <small>Dose, Cappuccino</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="config-step">
+                    <span class="config-label">2. Grão</span>
+                    <div class="config-options">
+                        <button class="config-opt" data-group="bean" data-value="Jacu Bird" data-price="28" onclick="selectOpt(this)">
+                            Jacu Bird
+                            <small>Frutas vermelhas e mel — R$ 28,00</small>
+                        </button>
+                        <button class="config-opt" data-group="bean" data-value="Café Frutado e Fermentado" data-price="18" onclick="selectOpt(this)">
+                            Café Frutado e Fermentado
+                            <small>Notas tropicais, anaeróbico — R$ 18,00</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="config-step" id="drinkStep" style="display:none">
+                    <span class="config-label">3. Tipo de Bebida</span>
+                    <div class="config-options" id="drinkOptions"></div>
+                </div>
+
+                <div class="config-step">
+                    <div class="config-summary" id="configSummary">Selecione o método, grão e bebida para montar seu café.</div>
+                    <button class="config-add-btn" id="configAddBtn" disabled onclick="addSpecialtyToCart()">+ Adicionar ao Carrinho</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Regular coffees -->
         <div class="menu-grid">
             {% for item in menu.coffees %}
             <div class="menu-item">
-                <div class="menu-item-name">{{ item.name }}</div>
-                <div class="menu-item-desc">{{ item.description }}</div>
-                <div class="menu-item-price">R$ {{ "%.2f"|format(item.price) }}</div>
+                <div class="menu-item-body">
+                    <div class="menu-item-name">{{ item.name }}</div>
+                    <div class="menu-item-desc">{{ item.description }}</div>
+                    <div class="menu-item-footer">
+                        <div class="menu-item-price">R$ {{ "%.2f"|format(item.price) }}</div>
+                        <button class="add-btn" onclick="addToCart({{ item.id }}, '{{ item.name }}', {{ item.price }})">+ Adicionar</button>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
     </div>
 
+    <!-- ── Pastéis ── -->
     <div class="menu-section">
         <h2>🥟 Pastéis</h2>
         <div class="menu-grid">
@@ -107,7 +416,32 @@
                 <div class="menu-item-body">
                     <div class="menu-item-name">{{ item.name }}</div>
                     <div class="menu-item-desc">{{ item.description }}</div>
-                    <div class="menu-item-price">R$ {{ "%.2f"|format(item.price) }}</div>
+                    <div class="menu-item-footer">
+                        <div class="menu-item-price">R$ {{ "%.2f"|format(item.price) }}</div>
+                        <button class="add-btn" onclick="addToCart({{ item.id }}, '{{ item.name }}', {{ item.price }})">+ Adicionar</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ── Sobremesas ── -->
+    <div class="menu-section">
+        <h2>🍬 Sobremesas</h2>
+        <div class="menu-grid">
+            {% for item in menu.sobremesas %}
+            <div class="menu-item">
+                {% if item.image %}
+                <img class="menu-item-image" src="{{ item.image }}" alt="{{ item.name }}">
+                {% endif %}
+                <div class="menu-item-body">
+                    <div class="menu-item-name">{{ item.name }}</div>
+                    <div class="menu-item-desc">{{ item.description }}</div>
+                    <div class="menu-item-footer">
+                        <div class="menu-item-price">R$ {{ "%.2f"|format(item.price) }}</div>
+                        <button class="add-btn" onclick="addToCart({{ item.id }}, '{{ item.name }}', {{ item.price }})">+ Adicionar</button>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -116,16 +450,177 @@
 
     {% if user %}
     <div class="cta-banner">
-        <h3>Not sure what to order?</h3>
-        <p>Our AI Barista can help you pick the perfect combination!</p>
-        <a href="{{ url_for('chat') }}" class="btn btn-secondary">Chat with AI Barista</a>
+        <h3>Dúvidas sobre o cardápio?</h3>
+        <p>Nosso AI Barista te ajuda a escolher a combinação perfeita!</p>
+        <a href="{{ url_for('chat') }}" class="btn btn-secondary">Falar com o AI Barista</a>
     </div>
     {% else %}
     <div class="cta-banner">
-        <h3>Want a personalized recommendation?</h3>
-        <p>Create an account to chat with our AI Barista.</p>
-        <a href="{{ url_for('register') }}" class="btn btn-secondary">Sign Up Free</a>
+        <h3>Quer uma recomendação personalizada?</h3>
+        <p>Crie uma conta para conversar com nosso AI Barista.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-secondary">Criar conta grátis</a>
     </div>
     {% endif %}
+
 </div>
+
+<!-- ── Floating cart button ── -->
+<button class="cart-fab" onclick="openCart()" id="cartFab" style="display:none">
+    🛒 Carrinho
+    <span class="cart-count" id="cartCount">0</span>
+</button>
+
+<!-- ── Cart overlay + drawer ── -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+        <h3>🛒 Seu Pedido</h3>
+        <button class="cart-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+        <p class="cart-empty">Seu carrinho está vazio.</p>
+    </div>
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total</span>
+            <span id="cartTotal">R$ 0,00</span>
+        </div>
+        {% if user %}
+        <button class="checkout-btn" id="checkoutBtn" onclick="checkout()" disabled>Fechar Pedido com AI Barista ➤</button>
+        {% else %}
+        <a href="{{ url_for('login') }}" style="display:block">
+            <button class="checkout-btn">Faça login para fechar pedido</button>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // ── Specialty coffee configurator ──
+    const drinksByMethod = {
+        'Coado':    ['V60', 'Chemex', 'AeroPress', 'Coado Simples'],
+        'Espresso': ['Espresso Simples', 'Cappuccino', 'Cold Brew'],
+    };
+
+    const configState = { method: null, bean: null, price: null, drink: null };
+
+    function selectOpt(btn) {
+        const group = btn.dataset.group;
+        document.querySelectorAll(`.config-opt[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        configState[group] = btn.dataset.value;
+        if (group === 'bean') configState.price = parseFloat(btn.dataset.price);
+        if (group === 'method') {
+            configState.drink = null;
+            renderDrinkOptions();
+        }
+        updateConfigSummary();
+    }
+
+    function renderDrinkOptions() {
+        const step = document.getElementById('drinkStep');
+        const container = document.getElementById('drinkOptions');
+        const drinks = drinksByMethod[configState.method] || [];
+        container.innerHTML = drinks.map(d =>
+            `<button class="config-opt" data-group="drink" data-value="${d}" onclick="selectOpt(this)">${d}</button>`
+        ).join('');
+        step.style.display = 'flex';
+    }
+
+    function updateConfigSummary() {
+        const { method, bean, price, drink } = configState;
+        const summary = document.getElementById('configSummary');
+        const addBtn  = document.getElementById('configAddBtn');
+        const parts = [];
+        if (method) parts.push(`<strong>${method}</strong>`);
+        if (bean)   parts.push(`<strong>${bean}</strong>`);
+        if (drink)  parts.push(`<strong>${drink}</strong>`);
+        if (price)  parts.push(`R$ ${price.toFixed(2).replace('.', ',')}`);
+        summary.innerHTML = parts.length ? parts.join(' · ') : 'Selecione o método, grão e bebida para montar seu café.';
+        addBtn.disabled = !(method && bean && drink);
+    }
+
+    function addSpecialtyToCart() {
+        const { method, bean, price, drink } = configState;
+        if (!method || !bean || !drink) return;
+        const name = `${bean} — ${drink} (${method})`;
+        const id   = `specialty_${bean}_${method}_${drink}`.replace(/\s+/g, '_');
+        addToCart(id, name, price);
+    }
+
+    let cart = [];
+
+    function addToCart(id, name, price) {
+        const existing = cart.find(i => i.id === id);
+        if (existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({ id, name, price, qty: 1 });
+        }
+        renderCart();
+        openCart();
+    }
+
+    function changeQty(id, delta) {
+        const item = cart.find(i => i.id === id);
+        if (!item) return;
+        item.qty += delta;
+        if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+        renderCart();
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cartItems');
+        const countEl   = document.getElementById('cartCount');
+        const totalEl   = document.getElementById('cartTotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const fab       = document.getElementById('cartFab');
+
+        const totalQty   = cart.reduce((s, i) => s + i.qty, 0);
+        const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+        countEl.textContent = totalQty;
+        totalEl.textContent = 'R$ ' + totalPrice.toFixed(2).replace('.', ',');
+        fab.style.display   = totalQty > 0 ? 'flex' : 'none';
+        if (checkoutBtn) checkoutBtn.disabled = totalQty === 0;
+
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="cart-empty">Seu carrinho está vazio.</p>';
+            return;
+        }
+
+        container.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <div class="cart-item-info">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-price">R$ ${(item.price * item.qty).toFixed(2).replace('.', ',')}</div>
+                </div>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+                    <span class="qty-num">${item.qty}</span>
+                    <button class="qty-btn" onclick="changeQty(${item.id}, +1)">+</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function openCart() {
+        document.getElementById('cartOverlay').classList.add('open');
+        document.getElementById('cartDrawer').classList.add('open');
+    }
+
+    function closeCart() {
+        document.getElementById('cartOverlay').classList.remove('open');
+        document.getElementById('cartDrawer').classList.remove('open');
+    }
+
+    function checkout() {
+        if (cart.length === 0) return;
+        const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        const lines = cart.map(i => `• ${i.qty}x ${i.name} — R$ ${(i.price * i.qty).toFixed(2).replace('.', ',')}`).join('\n');
+        const orderMsg = `Olá! Gostaria de fechar o seguinte pedido:\n\n${lines}\n\nTotal: R$ ${totalPrice.toFixed(2).replace('.', ',')}\n\nQuais são as opções de pagamento e entrega?`;
+        sessionStorage.setItem('pendingOrder', orderMsg);
+        window.location.href = '{{ url_for("chat") }}';
+    }
+</script>
 {% endblock %}

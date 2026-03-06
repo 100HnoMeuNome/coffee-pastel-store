@@ -227,6 +227,26 @@
         messagesEl.scrollTop = messagesEl.scrollHeight;
     }
 
+    function formatMessage(text, role) {
+        if (role === 'user') return document.createTextNode(text);
+        // Convert markdown-like formatting to HTML for assistant messages
+        const html = text
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .split('\n')
+            .map(line => {
+                if (/^[•\-\*] /.test(line))  return `<li>${line.slice(2).trim()}</li>`;
+                if (/^\d+\.\s/.test(line))    return `<li>${line.replace(/^\d+\.\s/, '').trim()}</li>`;
+                return line ? `<p style="margin:0 0 4px">${line}</p>` : '';
+            })
+            .join('')
+            .replace(/(<li>.*?<\/li>)+/gs, match => `<ul style="margin:4px 0 4px 16px;padding:0">${match}</ul>`);
+        const span = document.createElement('span');
+        span.innerHTML = html;
+        return span;
+    }
+
     function appendMessage(role, text) {
         const wrapper = document.createElement('div');
         wrapper.className = `message ${role}`;
@@ -237,7 +257,7 @@
 
         const bubble = document.createElement('div');
         bubble.className = 'bubble';
-        bubble.textContent = text;
+        bubble.appendChild(formatMessage(text, role));
 
         wrapper.appendChild(avatar);
         wrapper.appendChild(bubble);
@@ -304,6 +324,16 @@
 
     inputEl.addEventListener('keydown', e => {
         if (e.key === 'Enter') sendMessage();
+    });
+
+    // Auto-send order from cart if coming from menu checkout
+    window.addEventListener('DOMContentLoaded', () => {
+        const pendingOrder = sessionStorage.getItem('pendingOrder');
+        if (pendingOrder) {
+            sessionStorage.removeItem('pendingOrder');
+            inputEl.value = pendingOrder;
+            sendMessage();
+        }
     });
 </script>
 {% endblock %}
