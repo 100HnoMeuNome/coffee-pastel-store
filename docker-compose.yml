@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "5000:5000"
+      - "5002:5002"
     environment:
       # Datadog APM
       DD_AGENT_HOST: datadog-agent

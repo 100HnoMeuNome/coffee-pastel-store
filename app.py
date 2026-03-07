@@ -284,4 +284,4 @@ if __name__ == "__main__":
     init_db()
     # SECURITY ISSUE: debug=True in production exposes an interactive debugger
     # and full stack traces to anyone who triggers an error.
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5002, debug=True)

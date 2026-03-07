@@ -11,7 +11,7 @@ ENV FLASK_APP=app.py
 ENV FLASK_ENV=development
 ENV PYTHONUNBUFFERED=1
 
-EXPOSE 5000
+EXPOSE 5002
 
 # ddtrace-run auto-instruments Flask with Datadog APM
 CMD ["ddtrace-run", "python", "app.py"]
